@@ -66,12 +66,220 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* 사이드바 토글 버튼 */
+        .sidebar-toggle {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-magenta));
+            border: none;
+            border-radius: 0 12px 12px 0;
+            padding: 15px 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+
+        .sidebar-toggle:hover {
+            padding-left: 15px;
+        }
+
+        .sidebar-toggle.active {
+            left: 360px;
+        }
+
+        /* 사이드바 */
+        .sidebar {
+            position: fixed;
+            left: -370px;
+            top: 0;
+            width: 360px;
+            height: 100vh;
+            background: rgba(15, 12, 41, 0.98);
+            border-right: 1px solid var(--card-border);
+            z-index: 1000;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(20px);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--card-border);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-search {
+            display: flex;
+            gap: 10px;
+        }
+
+        .sidebar-search input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .sidebar-search input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        .sidebar-search input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .sidebar-search button {
+            padding: 12px 18px;
+            background: var(--accent-cyan);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-search button:hover {
+            background: #00b8e6;
+        }
+
+        .sidebar-results {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .sidebar-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-results::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-results::-webkit-scrollbar-thumb {
+            background: var(--accent-cyan);
+            border-radius: 3px;
+        }
+
+        .interviewer-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interviewer-card:hover {
+            background: rgba(0, 212, 255, 0.15);
+            border-color: var(--accent-cyan);
+            transform: translateX(5px);
+        }
+
+        .interviewer-card .id-badge {
+            display: inline-block;
+            background: var(--accent-magenta);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .interviewer-card .name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--accent-cyan);
+        }
+
+        .interviewer-card .address {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-results .icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .result-count {
+            padding: 10px 15px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+        }
+
+        /* 메인 컨테이너 */
         .container {
             position: relative;
             z-index: 1;
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .container.shifted {
+            margin-left: calc(360px + (100% - 800px) / 2);
+        }
+
+        @media (max-width: 1200px) {
+            .container.shifted {
+                margin-left: 380px;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-toggle.active {
+                left: calc(100% - 45px);
+            }
+            .container.shifted {
+                margin-left: auto;
+            }
         }
 
         header {
@@ -164,6 +372,11 @@
         }
 
         .input-group input::placeholder { color: rgba(255, 255, 255, 0.3); }
+
+        .input-group input.filled-from-search {
+            border-color: var(--success-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
 
         .waypoint-container { margin: 20px 0; }
 
@@ -378,12 +591,59 @@
         }
 
         footer a { color: var(--accent-cyan); text-decoration: none; }
+
+        /* 선택 알림 토스트 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success-green);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
     
-    <div class="container">
+    <!-- 사이드바 토글 버튼 -->
+    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">
+        👤 면접원 검색
+    </button>
+
+    <!-- 사이드바 -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>👤 면접원 검색</h2>
+            <div class="sidebar-search">
+                <input type="text" id="interviewer-search" placeholder="ID 또는 이름 검색" onkeyup="searchInterviewer(event)">
+                <button onclick="searchInterviewer()">검색</button>
+            </div>
+        </div>
+        <div class="sidebar-results" id="sidebar-results">
+            <div class="no-results">
+                <div class="icon">🔍</div>
+                <p>면접원 ID 또는 이름을 검색하세요</p>
+                <p style="font-size: 0.85rem; margin-top: 10px;">검색 결과를 클릭하면<br>출발지에 주소가 입력됩니다.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 토스트 알림 -->
+    <div class="toast" id="toast"></div>
+
+    <div class="container" id="main-container">
         <header>
             <h1 class="logo">🚗 ROUTE CALC</h1>
             <p class="subtitle">카카오 API 기반 실제 경로 거리 & 유류비 계산기</p>
@@ -392,7 +652,7 @@
         <div class="card">
             <h2 class="card-title"><span class="icon">📍</span> 경로 설정</h2>
             <div class="input-group">
-                <label for="start">출발지</label>
+                <label for="start">출발지 <span style="color: var(--accent-cyan); font-size: 0.8rem;">(👤 면접원 검색으로 자동 입력 가능)</span></label>
                 <input type="text" id="start" placeholder="예: 서울시청, 강남역, 부산 해운대구">
             </div>
 
@@ -474,7 +734,182 @@
         // 카카오 REST API 키
         const KAKAO_REST_API_KEY = '90002fe2ca1129c4281d84a37e00eb43';
         
+        // 면접원 데이터
+        const INTERVIEWERS = [
+            {"id":"39092","name":"강경양","address":"울산광역시 남구 대암로 82 신정현대홈타운 205동 1302호"},
+            {"id":"29088","name":"강선연","address":"부산광역시 동래구 충렬대로126번길 40"},
+            {"id":"13334","name":"강순덕","address":"부산광역시 동래구 연안로 74 안락뜨란채2단지아파트 208동 1605호"},
+            {"id":"33406","name":"강형희","address":"경상남도 거제시 용소3길 16 신아그린아파트 101-203"},
+            {"id":"37725","name":"곽성미","address":"부산광역시 동구 초량남로 43번길 7"},
+            {"id":"39054","name":"김귀자","address":"울산광역시 울주군 언양읍 반천강변길 51 102동 805호(반천현대아파트)"},
+            {"id":"461","name":"김금희","address":"부산광역시 금정구 중앙대로1667번길 8 우신뉴타운아파트 103-1504"},
+            {"id":"16595","name":"김기령","address":"부산광역시 부산진구 개금본동로 34 (개금3동) 현대아파트 103동 411호"},
+            {"id":"3062","name":"김동예","address":"부산광역시 부산진구 거제천로 10"},
+            {"id":"38878","name":"김미숙","address":"부산광역시 해운대구 대처놀103번길 61 LG아파트 119-804"},
+            {"id":"38754","name":"김미애","address":"부산광역시 동래구 중앙대로 1335번길 3, 609호"},
+            {"id":"9186","name":"김미희","address":"울산광역시 중구 남외동 일신에일린의뜰 116동 602호"},
+            {"id":"521","name":"김수자","address":"부산광역시 동래구 쇠미로129번길 62-12 새온천화신동영아파트 105동 705호"},
+            {"id":"38557","name":"김순정","address":"부산광역시 부산진구 마철로114 서면비스타동원아파트 102동503호"},
+            {"id":"6178","name":"김영미","address":"부산광역시 해운대구 대천로67번길 7 해운대대창아파트 102동 601호"},
+            {"id":"38091","name":"김영미(양산)","address":"경상남도 양산시 양주로33  이편한1차 111동 1502호 (남부동)"},
+            {"id":"38191","name":"김은숙","address":"부산광역시 기장군 정관읍 정관4로 24 114-2004호(동일1차)"},
+            {"id":"39093","name":"김정미","address":"울산광역시 동구 녹수11길 50 현대패밀리전하아파트 102동 210호"},
+            {"id":"12667","name":"김정화","address":"부산광역시 영도구 남항새싹 7길 28, 1층"},
+            {"id":"38042","name":"김정희","address":"부산광역시 사하구 하신번영로365"},
+            {"id":"37888","name":"김종건","address":"경상남도 김해시 구지로 63 901"},
+            {"id":"17245","name":"김주예","address":"부산광역시 사하구 감천로 32 감천백산아파트 1110호"},
+            {"id":"39091","name":"김지우","address":"부산광역시 해운대구 센텀동로 9 B동 1001호(트럼프월트센텀아파트)"},
+            {"id":"34815","name":"김춘하","address":"부산광역시 사하구 제석로 79번길 당리반도보라 102동 1103호"},
+            {"id":"39123","name":"김혜리","address":"부산광역시 해운대구 재반로 141 103동 608호, 금호아파트"},
+            {"id":"10156","name":"문영선","address":"부산광역시 해운대구 삼어로 133번나길 18 203동 2201호(해운대 센텀트루엘 2단지)"},
+            {"id":"20737","name":"박말자","address":"부산광역시 연제구 아시아드대로 39 레이카운티 403동 703호"},
+            {"id":"38381","name":"박미연","address":"경상남도 김해시 분성로134번길7 쌍용스윗닷홈101-403"},
+            {"id":"29755","name":"박선자","address":"부산광역시 영도구 청학남로 10-1 2층"},
+            {"id":"39089","name":"박성호","address":"부산광역시 수영구 광안동 1068-6 우창빌, 402호"},
+            {"id":"37155","name":"박연숙","address":"부산광역시 북구 덕천동 함박봉로26 덕천롯데아파트 101-404"},
+            {"id":"38996","name":"박정여","address":"경상남도 창원시 성산구 삼정자로79 108동 402호(유니온빌리지)"},
+            {"id":"17908","name":"박주영","address":"부산광역시 사하구 오작로 152 괴정한일하나로타운 1-101호"},
+            {"id":"38376","name":"박혜미","address":"부산광역시 강서구 신호산단5로31 316동1802호"},
+            {"id":"38377","name":"배정영","address":"부산광역시 영도구 일산봉로36-1 B-202"},
+            {"id":"34687","name":"서미숙","address":"부산광역시 연제구 거제천로136번길 7-1"},
+            {"id":"151","name":"석경애","address":"부산광역시 동구 범일로21 두산위브더제니스하버시티 105동 103호"},
+            {"id":"38501","name":"성현주","address":"울산광역시 중구 평동3길 2 e-편한세상 103-904"},
+            {"id":"38886","name":"송재혁","address":"부산광역시 해운대구 달맞이길 65번길 61 오성빌리지 203호"},
+            {"id":"31308","name":"신예원","address":"부산광역시 동래구 충렬대로 114 듀오빌 903호(온천동)"},
+            {"id":"12621","name":"심미경","address":"부산광역시 남구 진남로64번길 29, 영광그린빌 501호"},
+            {"id":"39128","name":"양단비","address":"부산광역시 사하구 다송로 23 106동 1402호, 다대 롯대캐슬 블루"},
+            {"id":"38997","name":"양현자","address":"경상남도 거제시 연초면 방곡길14"},
+            {"id":"39076","name":"여미화","address":"부산광역시 동구 초량중로 114 102동 2704호(범양레우스 센트럴베이)"},
+            {"id":"39090","name":"오기석","address":"울산광역시 동구 일산동 모던하우스 307호"},
+            {"id":"38397","name":"유경옥","address":"부산광역시 서구 대영로27번길26-18 장마빌리402호"},
+            {"id":"4943","name":"유재임","address":"경상남도 창원시 성산구 상남로216번길 7-1 (신월동,1층 안채)"},
+            {"id":"34591","name":"유정선","address":"경상남도 창원시 성산구 원이대로 449 노블파크아파트 124동 1604호"},
+            {"id":"29132","name":"윤정희","address":"부산광역시 중구 영주로 73 영주동동아아파트 104동 309호"},
+            {"id":"29290","name":"윤진아","address":"경상남도 양산시 동면 외송로30, 사송더샵데시앙2차 7단지 709동1401호"},
+            {"id":"30199","name":"이경남","address":"부산광역시 동래구 쇠미로17번길 3 성지그린빌 A동 202호"},
+            {"id":"38937","name":"이경희","address":"부산광역시 부산진구 신천대로197번길 15 서면2차 봄여름가을겨울 APT 104-1202"},
+            {"id":"38222","name":"이나교","address":"부산광역시 사하구 하신중앙로170 현대아파트 102동2407"},
+            {"id":"38922","name":"이숙녀","address":"부산광역시 동래구 연안로 74 안락뜨란채 204동 303호"},
+            {"id":"39127","name":"이영혁","address":"부산광역시 부산진구 동평로 352, 109동 1804호(현대아파트)"},
+            {"id":"38581","name":"이유진","address":"부산광역시 해운대구 해운대로 284"},
+            {"id":"9895","name":"이윤주","address":"부산광역시 남구 신선로 165 감만 현대2차아파트 202동 806호"},
+            {"id":"30212","name":"이은경","address":"부산광역시 동래구 명장로63번다길 6 명장일양타운 A동 407호"},
+            {"id":"36317","name":"이은주","address":"경상남도 김해시 장유로 288번길 15 무계동장유더샵아파트 104-302"},
+            {"id":"38877","name":"이정미","address":"부산광역시 해운대구 중동2로34번길 29 롯데캐슬마린 106-2001"},
+            {"id":"38755","name":"이정애","address":"부산광역시 남구 동명로 202 104동 1502호"},
+            {"id":"39088","name":"이진영","address":"부산광역시 수영구 망미배산로 10번길 69-6"},
+            {"id":"9185","name":"이태숙","address":"울산광역시 중구 남외동 대우 푸르지오 105동 702호"},
+            {"id":"38757","name":"이혜진","address":"울산광역시 동구 방어진순환도로 497, 903호 (방어동,강산드림빌)"},
+            {"id":"37751","name":"인지연","address":"부산광역시 해운대구 아랫반송로 21번길 23-28"},
+            {"id":"28824","name":"임영희","address":"부산광역시 북구 화명신도시로 244 화명리버빌2차아파트 201-804"},
+            {"id":"38758","name":"정경옥","address":"울산광역시 중구 평동3길 2 103-1903"},
+            {"id":"702","name":"정성애","address":"부산광역시 사하구 대티로 17번길 47(괴정2동) 울트라참누리아파트101동 908호"},
+            {"id":"38443","name":"정연숙","address":"부산광역시 사하구 오작로 81,401호 (괴정동)"},
+            {"id":"36497","name":"주성희","address":"경상남도 양산시 동면 내송큰들로 84 사송트루엘아파트 112동 403호"},
+            {"id":"39113","name":"주예솔","address":"부산광역시 해운대구 송정동 173-7"},
+            {"id":"39105","name":"주이경","address":"경상남도 김해시 율하2로 222번길 9-9, 202호"},
+            {"id":"38661","name":"천현희","address":"부산광역시 사하구 장림동 장림번영로 53 나산리버빌 903호"},
+            {"id":"38753","name":"최희야","address":"부산광역시 사하구 장평로 87 협성르네상스 301동 901호"},
+            {"id":"38060","name":"하경숙","address":"울산광역시 중구 복산동 36-11"},
+            {"id":"5808","name":"한숙자","address":"부산광역시 연제구 거제대로214번길 6 거제경남아파트 2동 905호"},
+            {"id":"38940","name":"한애경","address":"경상남도 창원시 진해구 냉천로 262 104동 301호"},
+            {"id":"30213","name":"한은희","address":"경상남도 창원시 성산구 대정로40번길 7 (가음동 17) 더샵센트럴파크 104동 1701호"},
+            {"id":"38545","name":"한정애","address":"부산광역시 사하구 사하로178 C동 502호"},
+            {"id":"8507","name":"현규미","address":"부산광역시 동구 범일로 41 LH오션브릿지 102동 2102호"},
+            {"id":"2716","name":"홍성순","address":"부산광역시 서구 꽃마을로 57 서대신금호어울림아파트 103-1603호"},
+            {"id":"23116","name":"홍숙현","address":"부산광역시 사하구 서포로30번길 12 e편한세상 사하2차 206동 1004호"},
+            {"id":"38756","name":"홍인혜","address":"부산광역시 연제구 거제동 228-23번지"}
+        ];
+
         let waypointCount = 0;
+
+        // 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('sidebar-toggle');
+            const container = document.getElementById('main-container');
+            
+            sidebar.classList.toggle('open');
+            toggle.classList.toggle('active');
+            container.classList.toggle('shifted');
+        }
+
+        // 면접원 검색
+        function searchInterviewer(event) {
+            if (event && event.key && event.key !== 'Enter') return;
+            
+            const query = document.getElementById('interviewer-search').value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('sidebar-results');
+            
+            if (!query) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">🔍</div>
+                        <p>면접원 ID 또는 이름을 검색하세요</p>
+                        <p style="font-size: 0.85rem; margin-top: 10px;">검색 결과를 클릭하면<br>출발지에 주소가 입력됩니다.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const results = INTERVIEWERS.filter(interviewer => 
+                interviewer.id.includes(query) || 
+                interviewer.name.toLowerCase().includes(query)
+            );
+            
+            if (results.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        <div class="icon">😢</div>
+                        <p>검색 결과가 없습니다</p>
+                        <p style="font-size: 0.85rem; margin-top: 10px;">"${query}"에 해당하는<br>면접원을 찾을 수 없습니다.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            resultsContainer.innerHTML = `
+                <div class="result-count">🎯 ${results.length}명의 면접원을 찾았습니다</div>
+                ${results.map(interviewer => `
+                    <div class="interviewer-card" onclick="selectInterviewer('${interviewer.address.replace(/'/g, "\\'")}', '${interviewer.name}')">
+                        <span class="id-badge">ID: ${interviewer.id}</span>
+                        <div class="name">${interviewer.name}</div>
+                        <div class="address">${interviewer.address}</div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // 면접원 선택 시 출발지에 주소 입력
+        function selectInterviewer(address, name) {
+            const startInput = document.getElementById('start');
+            startInput.value = address;
+            startInput.classList.add('filled-from-search');
+            
+            // 토스트 알림 표시
+            showToast(`✅ ${name}님의 주소가 출발지에 입력되었습니다!`);
+            
+            // 모바일에서 사이드바 닫기
+            if (window.innerWidth <= 800) {
+                toggleSidebar();
+            }
+            
+            // 잠시 후 강조 효과 제거
+            setTimeout(() => {
+                startInput.classList.remove('filled-from-search');
+            }, 3000);
+        }
+
+        // 토스트 알림
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
         // 경유지 추가
         function addWaypoint() {
