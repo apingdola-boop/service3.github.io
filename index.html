@@ -594,7 +594,9 @@
         </footer>
     </div>
 
-    <!-- 카카오맵 SDK -->
+    <!-- 카카오맵 SDK (자동 로드) -->
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=bf8339811c6bd26efd8de50fa9b4b202&libraries=services"></script>
+    
     <script>
         // 카카오맵 변수
         let geocoder = null;
@@ -602,24 +604,26 @@
         let waypointCount = 0;
         let sdkLoaded = false;
         
+        // 페이지 로드 시 즉시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            initKakaoSDK();
+        });
+        
         // SDK 초기화 함수
         function initKakaoSDK() {
-            if (typeof kakao !== 'undefined' && kakao.maps) {
-                kakao.maps.load(function() {
-                    geocoder = new kakao.maps.services.Geocoder();
-                    places = new kakao.maps.services.Places();
-                    sdkLoaded = true;
-                    console.log('✅ 카카오맵 SDK 로드 완료!');
-                });
+            if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
+                geocoder = new kakao.maps.services.Geocoder();
+                places = new kakao.maps.services.Places();
+                sdkLoaded = true;
+                console.log('✅ 카카오맵 SDK 로드 완료!');
             } else {
                 console.log('⏳ 카카오 SDK 대기 중...');
-                setTimeout(initKakaoSDK, 500);
+                setTimeout(initKakaoSDK, 100);
             }
         }
-    </script>
-    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=bf8339811c6bd26efd8de50fa9b4b202&libraries=services&autoload=false" onload="initKakaoSDK()"></script>
-    
-    <script>
+        
+        // 즉시 실행도 시도
+        initKakaoSDK();
 
         // 경유지 추가
         function addWaypoint() {
@@ -733,19 +737,15 @@
             }
 
             if (!geocoder || !sdkLoaded) {
-                // SDK 로드 재시도
-                if (typeof kakao !== 'undefined' && kakao.maps) {
-                    try {
-                        kakao.maps.load(function() {
-                            geocoder = new kakao.maps.services.Geocoder();
-                            places = new kakao.maps.services.Places();
-                            sdkLoaded = true;
-                        });
-                    } catch(e) {}
+                // SDK 즉시 초기화 시도
+                if (typeof kakao !== 'undefined' && kakao.maps && kakao.maps.services) {
+                    geocoder = new kakao.maps.services.Geocoder();
+                    places = new kakao.maps.services.Places();
+                    sdkLoaded = true;
                 }
                 
                 if (!geocoder) {
-                    showError('카카오맵 로딩 중입니다. 2-3초 후 다시 시도해주세요. (도메인 등록을 확인하세요)');
+                    showError('카카오맵 로딩 중입니다. 페이지를 새로고침 해주세요.');
                     return;
                 }
             }
