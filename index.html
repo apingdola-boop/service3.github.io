@@ -595,42 +595,31 @@
     </div>
 
     <!-- 카카오맵 SDK -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=959981d01297038ee82fb377107307b8&libraries=services&autoload=false"></script>
-    
     <script>
-        // 카카오맵 Geocoder (SDK 로드 후 초기화)
+        // 카카오맵 변수
         let geocoder = null;
         let places = null;
         let waypointCount = 0;
         let sdkLoaded = false;
         
-        // SDK 로드 완료 후 초기화
-        try {
-            kakao.maps.load(function() {
-                geocoder = new kakao.maps.services.Geocoder();
-                places = new kakao.maps.services.Places();
-                sdkLoaded = true;
-                console.log('✅ 카카오맵 SDK 로드 완료!');
-            });
-        } catch (e) {
-            console.error('❌ 카카오맵 SDK 로드 실패:', e);
-        }
-        
-        // 3초 후에도 로드 안되면 재시도
-        setTimeout(function() {
-            if (!sdkLoaded && typeof kakao !== 'undefined') {
-                try {
-                    kakao.maps.load(function() {
-                        geocoder = new kakao.maps.services.Geocoder();
-                        places = new kakao.maps.services.Places();
-                        sdkLoaded = true;
-                        console.log('✅ 카카오맵 SDK 로드 완료! (재시도)');
-                    });
-                } catch (e) {
-                    console.error('❌ 카카오맵 SDK 재시도 실패:', e);
-                }
+        // SDK 초기화 함수
+        function initKakaoSDK() {
+            if (typeof kakao !== 'undefined' && kakao.maps) {
+                kakao.maps.load(function() {
+                    geocoder = new kakao.maps.services.Geocoder();
+                    places = new kakao.maps.services.Places();
+                    sdkLoaded = true;
+                    console.log('✅ 카카오맵 SDK 로드 완료!');
+                });
+            } else {
+                console.log('⏳ 카카오 SDK 대기 중...');
+                setTimeout(initKakaoSDK, 500);
             }
-        }, 3000);
+        }
+    </script>
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=959981d01297038ee82fb377107307b8&libraries=services&autoload=false" onload="initKakaoSDK()"></script>
+    
+    <script>
 
         // 경유지 추가
         function addWaypoint() {
