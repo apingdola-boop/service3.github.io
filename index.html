@@ -600,13 +600,37 @@
     <script>
         // 카카오맵 Geocoder (SDK 로드 후 초기화)
         let geocoder = null;
+        let places = null;
         let waypointCount = 0;
+        let sdkLoaded = false;
         
         // SDK 로드 완료 후 초기화
-        kakao.maps.load(function() {
-            geocoder = new kakao.maps.services.Geocoder();
-            console.log('카카오맵 SDK 로드 완료!');
-        });
+        try {
+            kakao.maps.load(function() {
+                geocoder = new kakao.maps.services.Geocoder();
+                places = new kakao.maps.services.Places();
+                sdkLoaded = true;
+                console.log('✅ 카카오맵 SDK 로드 완료!');
+            });
+        } catch (e) {
+            console.error('❌ 카카오맵 SDK 로드 실패:', e);
+        }
+        
+        // 3초 후에도 로드 안되면 재시도
+        setTimeout(function() {
+            if (!sdkLoaded && typeof kakao !== 'undefined') {
+                try {
+                    kakao.maps.load(function() {
+                        geocoder = new kakao.maps.services.Geocoder();
+                        places = new kakao.maps.services.Places();
+                        sdkLoaded = true;
+                        console.log('✅ 카카오맵 SDK 로드 완료! (재시도)');
+                    });
+                } catch (e) {
+                    console.error('❌ 카카오맵 SDK 재시도 실패:', e);
+                }
+            }
+        }, 3000);
 
         // 경유지 추가
         function addWaypoint() {
@@ -658,28 +682,49 @@
         // 주소로 좌표 검색
         function searchAddress(address) {
             return new Promise((resolve, reject) => {
-                geocoder.addressSearch(address, function(result, status) {
-                    if (status === kakao.maps.services.Status.OK) {
-                        resolve({
-                            lat: parseFloat(result[0].y),
-                            lng: parseFloat(result[0].x),
-                            address: result[0].address_name
-                        });
-                    } else {
-                        const places = new kakao.maps.services.Places();
-                        places.keywordSearch(address, function(result, status) {
-                            if (status === kakao.maps.services.Status.OK) {
-                                resolve({
-                                    lat: parseFloat(result[0].y),
-                                    lng: parseFloat(result[0].x),
-                                    address: result[0].place_name
+                // 먼저 키워드 검색 시도 (장소명 검색이 더 잘 됨)
+                if (places) {
+                    places.keywordSearch(address, function(result, status) {
+                        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                            resolve({
+                                lat: parseFloat(result[0].y),
+                                lng: parseFloat(result[0].x),
+                                address: result[0].place_name
+                            });
+                        } else {
+                            // 키워드 검색 실패시 주소 검색 시도
+                            if (geocoder) {
+                                geocoder.addressSearch(address, function(result, status) {
+                                    if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                                        resolve({
+                                            lat: parseFloat(result[0].y),
+                                            lng: parseFloat(result[0].x),
+                                            address: result[0].address_name
+                                        });
+                                    } else {
+                                        reject(new Error('주소를 찾을 수 없습니다: ' + address));
+                                    }
                                 });
                             } else {
-                                reject(new Error('주소를 찾을 수 없습니다: ' + address));
+                                reject(new Error('카카오맵 서비스를 사용할 수 없습니다.'));
                             }
-                        });
-                    }
-                });
+                        }
+                    });
+                } else if (geocoder) {
+                    geocoder.addressSearch(address, function(result, status) {
+                        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                            resolve({
+                                lat: parseFloat(result[0].y),
+                                lng: parseFloat(result[0].x),
+                                address: result[0].address_name
+                            });
+                        } else {
+                            reject(new Error('주소를 찾을 수 없습니다: ' + address));
+                        }
+                    });
+                } else {
+                    reject(new Error('카카오맵이 로드되지 않았습니다.'));
+                }
             });
         }
 
@@ -698,9 +743,22 @@
                 return;
             }
 
-            if (!geocoder) {
-                showError('카카오맵을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
-                return;
+            if (!geocoder || !sdkLoaded) {
+                // SDK 로드 재시도
+                if (typeof kakao !== 'undefined' && kakao.maps) {
+                    try {
+                        kakao.maps.load(function() {
+                            geocoder = new kakao.maps.services.Geocoder();
+                            places = new kakao.maps.services.Places();
+                            sdkLoaded = true;
+                        });
+                    } catch(e) {}
+                }
+                
+                if (!geocoder) {
+                    showError('카카오맵 로딩 중입니다. 2-3초 후 다시 시도해주세요. (도메인 등록을 확인하세요)');
+                    return;
+                }
             }
 
             btn.classList.add('loading');
