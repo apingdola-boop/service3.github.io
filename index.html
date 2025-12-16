@@ -524,11 +524,17 @@
     </div>
 
     <!-- 카카오맵 SDK -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=959981d01297038ee82fb377107307b8&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=959981d01297038ee82fb377107307b8&libraries=services&autoload=false"></script>
     
     <script>
-        // 카카오맵 Geocoder
-        const geocoder = new kakao.maps.services.Geocoder();
+        // 카카오맵 Geocoder (SDK 로드 후 초기화)
+        let geocoder = null;
+        
+        // SDK 로드 완료 후 초기화
+        kakao.maps.load(function() {
+            geocoder = new kakao.maps.services.Geocoder();
+            console.log('카카오맵 SDK 로드 완료!');
+        });
 
         // Haversine 공식으로 직선 거리 계산 (km)
         function getDistance(lat1, lon1, lat2, lon2) {
@@ -583,6 +589,11 @@
 
             if (!startInput || !endInput) {
                 showError('출발지와 도착지를 모두 입력해주세요.');
+                return;
+            }
+
+            if (!geocoder) {
+                showError('카카오맵을 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
                 return;
             }
 
@@ -650,4 +661,3 @@
     </script>
 </body>
 </html>
-
