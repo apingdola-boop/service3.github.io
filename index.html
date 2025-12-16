@@ -727,9 +727,9 @@
 
         <div class="card">
             <h2 class="card-title"><span class="icon">⛽</span> 유류비 설정</h2>
-            <div class="input-group">
+                <div class="input-group">
                 <label for="cost_per_km">km당 비용 (원/km)</label>
-                <input type="number" id="cost_per_km" value="150" min="50" max="500" step="10">
+                <input type="number" id="cost_per_km" value="180" min="50" max="500" step="10">
                 <p style="margin-top: 8px; font-size: 0.85rem; color: var(--text-secondary);">
                     💡 일반적으로 100~200원/km (휘발유 기준 약 130~170원/km)
                 </p>
@@ -786,7 +786,7 @@
             <p>Powered by <a href="https://developers.kakao.com/" target="_blank">Kakao Mobility API</a></p>
         </footer>
     </div>
-
+    
     <script>
         // 카카오 REST API 키
         const KAKAO_REST_API_KEY = '90002fe2ca1129c4281d84a37e00eb43';
@@ -1087,7 +1087,7 @@
             const startInput = document.getElementById('start').value.trim();
             const endInput = document.getElementById('end').value.trim();
             const waypoints = getWaypoints();
-            const costPerKm = parseFloat(document.getElementById('cost_per_km').value) || 150;
+            const costPerKm = parseFloat(document.getElementById('cost_per_km').value) || 180;
 
             if (!startInput || !endInput) {
                 showError('출발지와 도착지를 모두 입력해주세요.');
